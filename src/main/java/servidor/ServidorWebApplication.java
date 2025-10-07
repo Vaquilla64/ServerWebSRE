@@ -1,21 +1,29 @@
 package servidor;
 
 import com.sun.net.httpserver.HttpServer;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.InetSocketAddress;
+import java.net.*;
+
 
 public class ServidorWebApplication {
 
 	public static void main(String[] args) throws IOException{
-		int puerto = 8080;
-		HttpServer server = HttpServer.create(new InetSocketAddress(puerto), 0);
+		int puertoWeb = 8080;
+		int puertoDNS = 8053;
+		String hostDNS = "localhost";
+		
+		DnsClient dnsClient = new DnsClient(hostDNS, puertoDNS);
+		
+		HttpServer server = HttpServer.create(new InetSocketAddress(puertoWeb), 0);
+		
+		//Handler para la ruta principal
+		server.createContext("/", new DnsHandler(dnsClient));
 		
 		server.start();
-		System.out.println("Servidor iniciado en puerto " + puerto);
+		System.out.println("Servidor iniciado en puerto " + puertoWeb);
 	}
 
+	
+	
 }
